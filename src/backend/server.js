@@ -78,6 +78,7 @@ app.get('/verify/:token', async (req, res) => {
     try {
         const decoded = jwt.verify(token, secretKey);
         const { username, email } = decoded;
+        console.log(decoded);
 
         const user = await prisma.user.findFirst({
             where: { username, email }
@@ -98,8 +99,6 @@ app.get('/verify/:token', async (req, res) => {
         res.status(400).json({ message: 'Invalid or expired token' });
     }
 });
-
-
 
 const port = 3001;
 app.listen(port, () => {

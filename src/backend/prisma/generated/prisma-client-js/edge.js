@@ -171,13 +171,13 @@ const config = {
   "inlineDatasources": {
     "db": {
       "url": {
-        "fromEnvVar": "DATABASE_URL",
-        "value": null
+        "fromEnvVar": null,
+        "value": "mysql://root:rootpass@db:3306/cs_app"
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/prisma-client-js\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel role {\n  id_role              Int     @id @default(autoincrement())\n  role_description     String? @db.VarChar(255)\n  user_user_roleTorole user[]  @relation(\"user_roleTorole\")\n}\n\nmodel user {\n  username             String   @id @db.VarChar(255)\n  password             String?  @db.VarChar(255)\n  role                 Int?\n  email                String?  @db.VarChar(255)\n  Isverify             Boolean? @default(false)\n  verifyToken          String?  @db.VarChar(255)\n  role_user_roleTorole role?    @relation(\"user_roleTorole\", fields: [role], references: [id_role], onDelete: NoAction, onUpdate: NoAction, map: \"user_ibfk_1\")\n\n  @@index([role], map: \"role\")\n}\n",
-  "inlineSchemaHash": "764147a94d88172b221cfd1fd82df8ce560114a696dbb8c7c8beb8c1ebd8e88d",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/prisma-client-js\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n  // url      = env(\"DATABASE_URL\")\n  url      = \"mysql://root:rootpass@db:3306/cs_app\"\n}\n\nmodel role {\n  id_role              Int     @id @default(autoincrement())\n  role_description     String? @db.VarChar(255)\n  user_user_roleTorole user[]  @relation(\"user_roleTorole\")\n}\n\nmodel user {\n  username             String   @id @db.VarChar(255)\n  password             String?  @db.VarChar(255)\n  role                 Int?\n  email                String?  @db.VarChar(255)\n  Isverify             Boolean? @default(false)\n  verifyToken          String?  @db.VarChar(255)\n  role_user_roleTorole role?    @relation(\"user_roleTorole\", fields: [role], references: [id_role], onDelete: NoAction, onUpdate: NoAction, map: \"user_ibfk_1\")\n\n  @@index([role], map: \"role\")\n}\n",
+  "inlineSchemaHash": "1a4f75c853c597b046ed5ed899264dcd1cd08e5a5e9ba7686ca88eaad43c80ae",
   "copyEngine": true
 }
 config.dirname = '/'
@@ -188,9 +188,7 @@ config.engineWasm = undefined
 config.compilerWasm = undefined
 
 config.injectableEdgeEnv = () => ({
-  parsed: {
-    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
-  }
+  parsed: {}
 })
 
 if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {
