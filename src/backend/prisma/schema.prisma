@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  // url      = env("DATABASE_URL")
+  url      = "mysql://root:rootpass@db:3306/cs_app"
+}
+
+model role {
+  id_role              Int     @id @default(autoincrement())
+  role_description     String? @db.VarChar(255)
+  user_user_roleTorole user[]  @relation("user_roleTorole")
+}
+
+model user {
+  username             String   @id @db.VarChar(255)
+  password             String?  @db.VarChar(255)
+  role                 Int?
+  email                String?  @db.VarChar(255)
+  Isverify             Boolean? @default(false)
+  verifyToken          String?  @db.VarChar(255)
+  role_user_roleTorole role?    @relation("user_roleTorole", fields: [role], references: [id_role], onDelete: NoAction, onUpdate: NoAction, map: "user_ibfk_1")
+
+  @@index([role], map: "role")
+}
