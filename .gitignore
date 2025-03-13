@@ -1,5 +1,5 @@
 .dockerignore
 docker-compose.yaml
-backend/node_modules/
-backend/env
+src/backend/node_modules/
+src/backend/.env
 src/backend/Dockerfile
