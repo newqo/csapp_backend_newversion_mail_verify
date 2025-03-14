@@ -1,6 +1,6 @@
 // reset password
-const domain = 'localhost';
-const port = 3001
+const domain = '202.44.40.179';
+const port = 3000
 
 document.addEventListener("DOMContentLoaded", () => {
     const resetToken = window.location.pathname.split('/').pop(); // Extract token from URL

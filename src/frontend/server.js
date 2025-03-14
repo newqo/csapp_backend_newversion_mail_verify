@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors'); // Import CORS middleware
 const path = require('path');
 const app = express();
-const { domain, port } = require('./utils/domain');
+const { domain, port } = require('../utils/domain');
 const ports = 81;
 
 app.use(cors({

@@ -1,11 +1,11 @@
 const express = require('express');
 const app = express();
-const { PrismaClient } = require('./prisma/generated/prisma-client-js');
+const { PrismaClient } = require('./prisma/prisma/generated/prisma-client-js');
 const prisma = new PrismaClient();
 const authRoutes = require('./routes/auth');
 const authenticate = require('./middleware/auth');
 const {jwt, secretKey} = require('./utils/jwt');
-const { domain} = require('./utils/domain');
+const {domain , port} = require('./utils/domain');
 const cors = require('cors');
 
 app.use(cors({
@@ -17,7 +17,7 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Hello World! Q');
   console.log('Received a request to the root endpoint');
 });
 
@@ -50,7 +50,7 @@ app.get('/posts', async (req, res) => {
 
         // res.json(posts);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch posts' });
+        res.status(500).json({ error: 'Failed to fetch posts', detail: error.message });
     }
 });
 
@@ -107,7 +107,7 @@ app.get('/verify/:token', async (req, res) => {
     }
 });
 
-const port = 3001;
+
 app.listen(port, () => {
   console.log(`App is running on http://localhost:${port}`);
 });
