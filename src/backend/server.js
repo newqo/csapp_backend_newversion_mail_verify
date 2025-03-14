@@ -5,6 +5,13 @@ const prisma = new PrismaClient();
 const authRoutes = require('./routes/auth');
 const authenticate = require('./middleware/auth');
 const {jwt, secretKey} = require('./utils/jwt');
+const { domain} = require('./utils/domain');
+const cors = require('cors');
+
+app.use(cors({
+    origin: `http://${domain}:81`,
+    methods: ['GET', 'POST'], 
+}));
 
 app.use(express.json());
 app.use('/auth', authRoutes);
@@ -35,7 +42,7 @@ app.get('/posts', async (req, res) => {
                     .replace(/\r\n|\r|\n/g, " ")
                     .trim()
                 : post.Message,
-              img_url: `${domainName}/Image/IMG_SHOW/${post.Title}`,
+              img_url: `http://${domain}/DATA_From_Chiab/Image/IMG_SHOW/${post.Title}`,
             };
         });
 

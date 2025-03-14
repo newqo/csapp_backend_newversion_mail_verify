@@ -30,7 +30,7 @@ router.post('/register', async (req, res) => {
         const verifyTokenURL = `http://${domain}:${port}/verify/${mailToken}`;
 
         const mailContext = {
-            from: '"autoreply" <dummy.forcsapp@hotmail.com', // sender address
+            from: '"autoreply" <csappkmutnb@gmail.com>', // sender address
             to: email, // list of receivers
             subject: "CS APP Verify your email", // Subject line
             text: "", // plain text body
@@ -60,7 +60,7 @@ router.post('/register', async (req, res) => {
 // Login route
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    console.log(username,password);
+    // console.log(username,password);
     try {
         const user = await prisma.user.findUnique({
             where: { username },
@@ -89,6 +89,8 @@ router.post('/forgot-password', async (req, res) => {
                 email: email
             }
         });
+        console.log('-----------------------------------');
+        console.log("user verify token : " + user.verifyToken);
 
         if (!user) {
             return res.status(404).json({ message: 'User not found or email mismatch' });
@@ -96,6 +98,7 @@ router.post('/forgot-password', async (req, res) => {
 
         // Generate a password reset token
         const resetToken = generateMailToken({ username: user.username, email: user.email });
+        console.log("reset token : " +resetToken);
 
         // Update the user with the reset token
         await prisma.user.update({
@@ -103,11 +106,22 @@ router.post('/forgot-password', async (req, res) => {
             data: { verifyToken: resetToken } // Save the token in the user's record
         });
 
-        const resetURL = `http://${domain}:${port}/reset-password/${resetToken}`;
+        // ----
+        const newuser = await prisma.user.findFirst({
+            where: {
+                username: username,
+                email: email
+            }
+        });
+        console.log("user verify token : " + newuser.verifyToken);
+        console.log('-----------------------------------');
+        // ----
+
+        const resetURL = `http://${domain}:${81}/reset-password/${resetToken}`;
 
         // Send the email with the password reset link
         const mailContext = {
-            from: '"autoreply" <dummy.forcsapp@hotmail.com>', // sender address
+            from: '"autoreply" <csappkmutnb@gmail.com>', // sender address
             to: email, // recipient address
             subject: "CS APP Reset your password", // Subject line
             text: "", // plain text body
@@ -135,6 +149,42 @@ router.post('/forgot-password', async (req, res) => {
     }
 });
 
+router.post('/reset-password/:token', async (req, res) => {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    // console.log(req.body);
+    // console.log(newPassword);
+    console.log('----------------reset password-------------------');
+    console.log("reset-password token: " + token);
+    try {
+        // Find the user based on the reset token
+        const user = await prisma.user.findFirst({
+            where: { verifyToken: token }
+        });
+        console.log(user);
+
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid or expired reset token' });
+        }
+
+        const {username} = user;
+        // Hash the new password
+        const hashedPassword = await hashPassword(newPassword);
+        // Update the user's password and clear the reset token
+        await prisma.user.update({
+            where: { username },
+            data: {
+                password: hashedPassword,
+            },
+        });
+
+        res.status(200).json({ message: 'Password reset successfully' });
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        res.status(500).json({ error: 'Password reset failed', details: error.message });
+    }
+});
 
 
 module.exports = router;

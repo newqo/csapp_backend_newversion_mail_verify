@@ -1,2 +1,4 @@
-export const domain = 'localhost';
-export const port = 3001;
+const domain = 'localhost';
+const port = 3001;
+
+module.exports = { domain, port };
